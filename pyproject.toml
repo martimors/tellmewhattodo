@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "tellmewhattodo"
+version = "0.1.0"
+description = "Simple app that checks for what to do and presents that in a website"
+authors = ["Martin Morset <mmo@one.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
