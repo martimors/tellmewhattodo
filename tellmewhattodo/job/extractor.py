@@ -3,7 +3,7 @@ import datetime
 from os import getenv
 from typing import Any
 import requests
-from models.alert import Alert
+from tellmewhattodo.models.alert import Alert
 
 
 class BaseExtractor(ABC):

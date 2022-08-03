@@ -6,7 +6,7 @@ import pandas as pd
 import boto3
 from botocore.exceptions import ClientError
 
-from models.alert import Alert
+from tellmewhattodo.models.alert import Alert
 
 
 class BaseStorage(ABC):

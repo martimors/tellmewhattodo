@@ -1,0 +1,17 @@
+version: 1
+extractors:
+  - type: GitHubReleaseExtractor
+    config:
+      repository: dingobar/charts
+  - type: GitHubReleaseExtractor
+    config:
+      repository: apache/airflow
+  - type: GitHubReleaseExtractor
+    config:
+      repository: jupyterhub/zero-to-jupyterhub-k8s
+  - type: GitHubReleaseExtractor
+    config:
+      repository: mlflow/mlflow
+  - type: GitHubReleaseExtractor
+    config:
+      repository: meltano/meltano
