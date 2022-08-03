@@ -62,9 +62,23 @@ class S3Storage(BaseStorage):
                 boto3.client("s3", endpoint_url=self.S3_ENDPOINT).download_file(
                     self.BUCKET, self.KEY, str(filename)
                 )
-                return pd.read_csv(filename)
+                return pd.read_csv(filename, dtype="str")
             except ClientError as e:
                 print(e)
                 return pd.DataFrame(
                     columns=[k for k, _ in Alert.schema()["properties"].items()]
                 )
+
+
+def client() -> BaseStorage:
+    STORAGE_CLASS_NAME = getenv("STORAGE_CLASS")
+    if STORAGE_CLASS_NAME == "S3Storage":
+        STORAGE_CLASS = S3Storage("mmo-test")
+    elif STORAGE_CLASS_NAME == "LocalStorage":
+        STORAGE_CLASS = LocalStorage()
+    elif STORAGE_CLASS_NAME is None:
+        print("STORAGE_CLASS env variable not given, defaulting to LocalStorage")
+        STORAGE_CLASS = LocalStorage()
+    else:
+        raise ValueError(f"Storage class {STORAGE_CLASS_NAME} not found")
+    return STORAGE_CLASS
