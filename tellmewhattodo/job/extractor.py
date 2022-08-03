@@ -1,8 +1,11 @@
 from abc import ABC, abstractmethod
 import datetime
 from os import getenv
+from pathlib import Path
+import sys
 from typing import Any
 import requests
+import yaml
 from tellmewhattodo.models.alert import Alert
 
 
@@ -47,3 +50,17 @@ class GitHubReleaseExtractor(BaseExtractor):
             )
 
         return alerts
+
+
+def get_extractors() -> list[BaseExtractor]:
+    extractor_config_path = Path.cwd() / "tellme.yml"
+
+    with open(extractor_config_path) as config:
+        extractor_config = yaml.safe_load(config)
+    
+    extractors = []
+    for extractor in extractor_config["extractors"]:
+        instance = getattr(sys.modules[__name__], extractor["type"])(**extractor["config"])
+        extractors.append(instance)
+
+    return extractors

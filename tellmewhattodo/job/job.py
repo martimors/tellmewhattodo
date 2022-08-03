@@ -1,6 +1,6 @@
 from os import getenv
 import pandas as pd
-from tellmewhattodo.job.extractor import BaseExtractor, GitHubReleaseExtractor
+from tellmewhattodo.job.extractor import get_extractors
 from tellmewhattodo.job.storage import LocalStorage, S3Storage
 
 STORAGE_CLASS_NAME = getenv("STORAGE_CLASS")
@@ -16,12 +16,8 @@ else:
 
 
 def main():
-    extractors: list[BaseExtractor] = []
-    extractors.append(GitHubReleaseExtractor("dingobar/charts"))
-    extractors.append(GitHubReleaseExtractor("apache/airflow"))
-    extractors.append(GitHubReleaseExtractor("jupyterhub/zero-to-jupyterhub-k8s"))
-    extractors.append(GitHubReleaseExtractor("mlflow/mlflow"))
-    extractors.append(GitHubReleaseExtractor("meltano/meltano"))
+
+    extractors = get_extractors()
 
     alerts = []
     for extractor in extractors:
@@ -35,7 +31,3 @@ def main():
     )
 
     STORAGE_CLASS.write(all_alerts)
-
-
-if __name__ == "__main__":
-    main()
