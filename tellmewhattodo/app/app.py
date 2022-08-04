@@ -2,40 +2,42 @@ from tellmewhattodo.job.storage import client
 import streamlit as st
 import pandas as pd
 
+st.title("New releases")
+st.write("Toggle to dismiss. Updated daily.")
 
 storage_client = client()
 
-
-st.title("Tasks")
-
-with st.sidebar:
-    read = st.button("READ")
-    write = st.button("WRITE")
-    if read:
-        df = storage_client.read()
-        st.session_state["alerts"] = df
-    elif write:
-        storage_client.write(df)
-
-df.set_index("id", inplace=True)
-df["datetime"] = pd.to_datetime(df["datetime"])
-df["active"] = df["active"].astype(bool)
-
-df.sort_values(by=["active", "datetime"], axis=0, ascending=False, inplace=True)
-col_desc, col_ack = st.columns([10, 1])
+df = storage_client.read()
+df["active"] = df["active"].map({"True": True, "False": False})
+df = df.sort_values(by="datetime")
 
 
-def strikethrough(text: str) -> str:
-    return f"~~{text}~~"
+def highlight_active(s):
+    if s["active"]:
+        return ["background-color: red"] * len(s)
+    else:
+        return ["background-color: green"] * len(s)
 
 
-for idx, row in df.iterrows():
-    row = row.to_dict()
-    current_status = row["active"]
-    text = f"{row['datetime']}: {row['description']}"
-    if current_status:
-        text = strikethrough(text)
-    with col_desc:
-        st.markdown(text)
-    with col_ack:
-        c = st.checkbox("ack", key=idx, value=not current_status)
+
+# Interactive
+col1, col2 = st.columns([10, 1])
+description = df["id"] + ": " + df["description"]
+with col1:
+    option = st.selectbox("Alert", description)
+with col2:
+    button = st.button("Toggle")
+
+if button:
+    temp = df.copy()
+    temp["temp"] = description
+    ids = temp.loc[temp["temp"] == option]
+    current_active = df.loc[df["id"].isin(ids["id"]), "active"].iloc[0]
+    df.loc[df["id"].isin(ids["id"]), "active"] = not current_active
+
+
+# Make sure df is sorted
+df = df.sort_values(by=["active", "datetime"], ascending=(0, 1))
+st.dataframe(df.style.apply(highlight_active, axis=1), 1000, 2000)
+
+storage_client.write(df)
