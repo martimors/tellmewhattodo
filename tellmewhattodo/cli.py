@@ -18,7 +18,7 @@ def check():
 @cli.command()
 def server():
     """Show the extracted alerts in an interactive front-end"""
-    sys.argv = ["streamlit", "run", "tellmewhattodo/app/app.py"]
+    sys.argv = ["streamlit", "run", "--logger.level", "debug", "tellmewhattodo/app/app.py"]
     sys.exit(server_main())
 
 
