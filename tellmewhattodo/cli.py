@@ -5,7 +5,18 @@ from streamlit.cli import main as server_main
 
 
 @click.group()
-def cli():
+@click.option(
+    "--debug",
+    is_flag=True,
+    help="Logs more info to the console when debugging",
+    default=False,
+)
+@click.pass_context
+def cli(ctx, debug):
+    ctx.ensure_object(dict)
+    ctx.obj["DEBUG"] = debug
+    if debug:
+        print("Debug mode is active")
     pass
 
 
@@ -16,9 +27,16 @@ def check():
 
 
 @cli.command()
-def server():
+@click.pass_context
+def server(ctx):
     """Show the extracted alerts in an interactive front-end"""
-    sys.argv = ["streamlit", "run", "--logger.level", "debug", "tellmewhattodo/app/app.py"]
+    debug = ctx.obj["DEBUG"]
+    args = ["streamlit", "run"]
+    if debug:
+        args += ["--logger.level", "debug"]
+    sys.argv = args + [
+        "tellmewhattodo/app/app.py",
+    ]
     sys.exit(server_main())
 
 
