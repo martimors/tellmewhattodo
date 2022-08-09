@@ -1,5 +1,7 @@
 ```
 cat .env.example > .env
 poetry install
-poetry run python main.py
+poetry run tellmewhattodo --help
 ```
+
+Configuration in 
