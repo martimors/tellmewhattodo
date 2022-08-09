@@ -4,4 +4,4 @@ poetry install
 poetry run tellmewhattodo --help
 ```
 
-Configuration in 
+Configuration in [tellme.yml](./tellme.yml)
