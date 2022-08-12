@@ -1,7 +1,7 @@
 import sys
 import click
 from tellmewhattodo.job.job import main as job_main
-from streamlit.cli import main as server_main
+from streamlit.web.cli import main as server_main
 
 
 @click.group()
