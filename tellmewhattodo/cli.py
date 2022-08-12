@@ -3,6 +3,10 @@ import click
 from tellmewhattodo.job.job import main as job_main
 from streamlit.web.cli import main as server_main
 
+from logging import getLogger, DEBUG
+
+logger = getLogger(__name__)
+
 
 @click.group()
 @click.option(
@@ -16,13 +20,14 @@ def cli(ctx, debug):
     ctx.ensure_object(dict)
     ctx.obj["DEBUG"] = debug
     if debug:
-        print("Debug mode is active")
+        logger.setLevel(DEBUG)
     pass
 
 
 @cli.command()
 def check():
     """Run all configured extractors against the configured backend"""
+    logger.debug("Running tellmewhattodo check job")
     job_main()
 
 

@@ -2,6 +2,9 @@ from pathlib import Path
 from typing import Union
 from pydantic import BaseModel, BaseSettings
 import yaml
+from logging import getLogger
+
+logger = getLogger(__name__)
 
 
 class ExtractorJob(BaseModel):
@@ -20,10 +23,15 @@ class TellMe(BaseSettings):
 
 def get_config() -> TellMe:
     extractor_config_path = Path.cwd() / "tellme.yml"
+    if extractor_config_path.exists() and extractor_config_path.is_file():
+        logger.info("Found %s, parsing as config", extractor_config_path)
+        with open(extractor_config_path) as config:
+            extractor_config = TellMe.parse_obj(yaml.safe_load(config))
+    else:
+        logger.warning("Did not find %s, proceeding without", extractor_config_path)
+        extractor_config = TellMe()
 
-    with open(extractor_config_path) as config:
-        extractor_config = TellMe.parse_obj(yaml.safe_load(config))
-
+    logger.debug("Parsed config as %s", str(extractor_config.dict()))
     return extractor_config
 
 

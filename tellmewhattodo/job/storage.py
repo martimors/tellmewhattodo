@@ -7,6 +7,12 @@ import boto3
 from botocore.exceptions import ClientError
 
 from tellmewhattodo.models.alert import Alert
+from tellmewhattodo.settings import config
+
+from logging import getLogger
+
+
+logger = getLogger(__name__)
 
 
 class BaseStorage(ABC):
@@ -71,13 +77,15 @@ class S3Storage(BaseStorage):
 
 
 def client() -> BaseStorage:
-    STORAGE_CLASS_NAME = getenv("STORAGE_CLASS")
+    STORAGE_CLASS_NAME = config.storage
     if STORAGE_CLASS_NAME == "S3Storage":
         STORAGE_CLASS = S3Storage("mmo-test")
     elif STORAGE_CLASS_NAME == "LocalStorage":
         STORAGE_CLASS = LocalStorage()
     elif STORAGE_CLASS_NAME is None:
-        print("STORAGE_CLASS env variable not given, defaulting to LocalStorage")
+        logger.warning(
+            "STORAGE_CLASS env variable not given, defaulting to LocalStorage"
+        )
         STORAGE_CLASS = LocalStorage()
     else:
         raise ValueError(f"Storage class {STORAGE_CLASS_NAME} not found")
