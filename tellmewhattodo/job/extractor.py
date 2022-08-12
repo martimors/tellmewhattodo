@@ -1,11 +1,8 @@
 from abc import ABC, abstractmethod
-import datetime
 from os import getenv
-from pathlib import Path
 import sys
 from typing import Any
 import requests
-import yaml
 from tellmewhattodo.models.alert import Alert
 from tellmewhattodo.settings import config
 

@@ -1,6 +1,6 @@
 from pathlib import Path
 from typing import Union
-from pydantic import BaseModel
+from pydantic import BaseModel, BaseSettings
 import yaml
 
 
@@ -9,10 +9,13 @@ class ExtractorJob(BaseModel):
     config: dict[str, Union[int, str, float]]
 
 
-class TellMe(BaseModel):
-    version: int
-    storage: str
-    extractors: list[ExtractorJob]
+class TellMe(BaseSettings):
+    version: int = None
+    storage: str = None
+    extractors: list[ExtractorJob] = []
+
+    class Config:
+        env_prefix = "TELLME_"
 
 
 def get_config() -> TellMe:
