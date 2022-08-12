@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "tellmewhattodo"
-version = "2.0.0"
+version = "2.0.1"
 description = "Simple app that checks for what to do and presents that in a website"
 authors = ["Martin Morset <mmo@one.com>"]
 license = "MIT"
