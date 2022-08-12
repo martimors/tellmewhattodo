@@ -1,4 +1,5 @@
 version: 1
+storage: S3Storage
 extractors:
   - type: GitHubReleaseExtractor
     config:

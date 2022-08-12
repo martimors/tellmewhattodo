@@ -7,6 +7,7 @@ from typing import Any
 import requests
 import yaml
 from tellmewhattodo.models.alert import Alert
+from tellmewhattodo.settings import config
 
 
 class BaseExtractor(ABC):
@@ -53,14 +54,11 @@ class GitHubReleaseExtractor(BaseExtractor):
 
 
 def get_extractors() -> list[BaseExtractor]:
-    extractor_config_path = Path.cwd() / "tellme.yml"
-
-    with open(extractor_config_path) as config:
-        extractor_config = yaml.safe_load(config)
-    
     extractors = []
-    for extractor in extractor_config["extractors"]:
-        instance = getattr(sys.modules[__name__], extractor["type"])(**extractor["config"])
+    for extractor in config.extractors:
+        instance = getattr(sys.modules[__name__], extractor.type)(
+            **extractor.config
+        )
         extractors.append(instance)
 
     return extractors
