@@ -1,3 +1,4 @@
+from pathlib import Path
 import sys
 import click
 from tellmewhattodo.job.job import main as job_main
@@ -37,11 +38,10 @@ def server(ctx):
     """Show the extracted alerts in an interactive front-end"""
     debug = ctx.obj["DEBUG"]
     args = ["streamlit", "run"]
+    path_to_app = str(Path(__file__).parent / "app/app.py")
     if debug:
         args += ["--logger.level", "debug"]
-    sys.argv = args + [
-        "tellmewhattodo/app/app.py",
-    ]
+    sys.argv = args + [path_to_app]
     sys.exit(server_main())
 
 
