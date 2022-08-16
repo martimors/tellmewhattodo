@@ -20,3 +20,4 @@ Be sure to use [the latest version](https://hub.docker.com/r/dingobar/tellmewhat
 - Error handling (currently a village in siberia)
 - Backend API
 - Helm chart
+- Make a general Singer.io tap for REST-API's and use that instead
