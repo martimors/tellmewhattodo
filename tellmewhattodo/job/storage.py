@@ -6,7 +6,7 @@ import pandas as pd
 import boto3
 from botocore.exceptions import ClientError
 
-from tellmewhattodo.models.alert import Alert
+from tellmewhattodo.models import Alert
 from tellmewhattodo.settings import config
 
 from logging import getLogger

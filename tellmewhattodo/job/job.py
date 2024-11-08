@@ -1,5 +1,3 @@
-from threading import local
-import pandas as pd
 from tellmewhattodo.job.extractor import get_extractors
 from tellmewhattodo.job.storage import client
 
@@ -14,8 +12,7 @@ def main():
 
     local_alerts = storage_client.read()
     local_alerts["id"] = local_alerts["id"]
-    new_alerts = pd.DataFrame([alert.dict() for alert in alerts])
-    if not new_alerts.empty:
+    if alerts:
         # new_alerts = {alert.id for alert in alerts} - set(local_alerts["id"].unique())
         all_alerts = pd.concat(
             [local_alerts, new_alerts.loc[~new_alerts["id"].isin(local_alerts["id"])]]

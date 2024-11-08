@@ -2,7 +2,6 @@ from pathlib import Path
 import sys
 import click
 from tellmewhattodo.job.job import main as job_main
-from streamlit.web.cli import main as server_main
 
 from logging import getLogger, DEBUG
 
@@ -42,7 +41,7 @@ def server(ctx):
     if debug:
         args += ["--logger.level", "debug"]
     sys.argv = args + [path_to_app]
-    sys.exit(server_main())
+    raise NotImplementedError()
 
 
 if __name__ == "__main__":
