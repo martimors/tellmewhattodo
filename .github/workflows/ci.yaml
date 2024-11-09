@@ -15,7 +15,6 @@ jobs:
         with:
           python-version: "3.11"
           cache: "poetry"
-      - run: poetry config --list --local
       - uses: pre-commit/action@v3.0.1
   tests:
     runs-on: ubuntu-latest
