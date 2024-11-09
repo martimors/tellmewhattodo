@@ -11,7 +11,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
-      - uses: pre-commit/action@v3.0.1
+        with:
+          python-version: "3.11"
+          cache: "poetry"
       - run: poetry config virtualenvs.in-project true
-      - run: pre-commit run --all-files
+      - uses: pre-commit/action@v3.0.1
       - run: poetry install && poetry run pytest
