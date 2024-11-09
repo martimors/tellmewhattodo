@@ -1,10 +1,14 @@
-from abc import ABC, abstractmethod
-from os import getenv
 import sys
-from typing import Any
+from abc import ABC, abstractmethod
+from logging import getLogger
+from os import getenv
+
 import requests
-from tellmewhattodo.models.alert import Alert
+
+from tellmewhattodo.models import Alert
 from tellmewhattodo.settings import config
+
+logger = getLogger()
 
 
 class BaseExtractor(ABC):
@@ -23,14 +27,15 @@ class GitHubReleaseExtractor(BaseExtractor):
         r = requests.get(
             f"https://api.github.com/repos/{self.REPOSITORY}/releases",
             auth=auth,
+            timeout=10,
         )
         try:
             r.raise_for_status()
-        except requests.HTTPError as e:
-            print(e)
+        except requests.HTTPError:
+            logger.exception("Extraction failed for %s", self.REPOSITORY)
             return []
 
-        body: list[dict[str, Any]] = r.json()
+        body = r.json()
 
         alerts = []
         for release in body:
@@ -39,12 +44,13 @@ class GitHubReleaseExtractor(BaseExtractor):
             alerts.append(
                 Alert(
                     id=str(release["id"]),
-                    name=release["name"],
+                    name=release.get("name")
+                    or f"{self.REPOSITORY}-{release['tag_name']}",
                     description=f"{self.REPOSITORY} released {release['name']}",
-                    datetime=release["created_at"],
-                    active=True,
+                    created_at=release["created_at"],
+                    acked=False,
                     url=release["html_url"],
-                )
+                ),
             )
 
         return alerts
@@ -53,9 +59,7 @@ class GitHubReleaseExtractor(BaseExtractor):
 def get_extractors() -> list[BaseExtractor]:
     extractors = []
     for extractor in config.extractors:
-        instance = getattr(sys.modules[__name__], extractor.type)(
-            **extractor.config
-        )
+        instance = getattr(sys.modules[__name__], extractor.type)(**extractor.config)
         extractors.append(instance)
 
     return extractors

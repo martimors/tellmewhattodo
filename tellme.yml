@@ -1,5 +1,3 @@
-version: 1
-storage: LocalStorage
 extractors:
   - type: GitHubReleaseExtractor
     config:
