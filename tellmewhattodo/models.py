@@ -1,11 +1,14 @@
-from pydantic import BaseModel, AnyHttpUrl
 from datetime import datetime
+
+from pydantic import AnyHttpUrl, BaseModel, ConfigDict
 
 
 class Alert(BaseModel):
     id: str
     name: str
-    description: str
-    datetime: datetime
-    active: bool = True
-    url: AnyHttpUrl = None
+    created_at: datetime
+    acked: bool = False
+    description: str | None = None
+    url: AnyHttpUrl | None = None
+
+    model_config = ConfigDict(from_attributes=True)

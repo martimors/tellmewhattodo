@@ -1,0 +1,17 @@
+name: pre-commit
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+      - uses: pre-commit/action@v3.0.1
+      - run: poetry config virtualenvs.in-project true
+      - run: pre-commit run --all-files
+      - run: poetry install && poetry run pytest
