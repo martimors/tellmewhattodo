@@ -15,3 +15,4 @@ class AlertTable(Base):
     acked: Mapped[bool]
     description: Mapped[str] = mapped_column(nullable=True)
     url: Mapped[str] = mapped_column(nullable=True)
+    alert_type: Mapped[str]

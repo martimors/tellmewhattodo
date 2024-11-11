@@ -26,6 +26,7 @@ def extract_data(extractors: list[BaseExtractor]) -> None:
                     acked=alert.acked,
                     description=alert.description,
                     url=str(alert.url),
+                    alert_type=alert.alert_type,
                 )
                 for alert in alerts
                 if alert.id not in existing_ids

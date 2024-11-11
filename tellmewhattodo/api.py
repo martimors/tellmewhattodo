@@ -2,13 +2,21 @@ from collections.abc import Generator
 from typing import Annotated
 
 from fastapi import Depends, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
 
 from tellmewhattodo.models import Alert
 from tellmewhattodo.schemas import AlertTable, Base
 
+origins = ["http://localhost:5173"]
+
 app = FastAPI(title="Tell Me What To Do API")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_methods=["GET", "PATCH"],
+)
 
 engine = create_engine("sqlite:///database.db")
 Base.metadata.create_all(engine)

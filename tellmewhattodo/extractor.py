@@ -5,7 +5,7 @@ from os import getenv
 
 import requests
 
-from tellmewhattodo.models import Alert
+from tellmewhattodo.models import Alert, AlertType
 from tellmewhattodo.settings import config
 
 logger = getLogger()
@@ -50,6 +50,7 @@ class GitHubReleaseExtractor(BaseExtractor):
                     created_at=release["created_at"],
                     acked=False,
                     url=release["html_url"],
+                    alert_type=AlertType.GITHUB,
                 ),
             )
 
