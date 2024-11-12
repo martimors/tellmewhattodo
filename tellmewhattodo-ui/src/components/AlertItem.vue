@@ -8,7 +8,7 @@ const props = defineProps<{
   alert_type: string
   acked: boolean
   description: string
-  url: URL
+  url?: (string | null)
 }>();
 
 const icon = computed(() => {
@@ -26,7 +26,8 @@ const just_date = computed(() => {
     <i>
       <v-icon v-bind:name="icon" />
     </i>
-    <h3><a v-bind:href="url" target="_blank" rel="noopener">{{ name }}</a></h3>
+    <h3 v-if="url != null"><a v-bind:href="url" target="_blank" rel="noopener">{{ name }}</a></h3>
+    <h3 v-else>{{ name }}</h3>
     <p>{{ description }}</p>
     <p>{{ just_date }}</p>
     <button>{{ acked }}</button>
