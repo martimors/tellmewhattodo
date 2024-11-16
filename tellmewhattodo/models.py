@@ -13,7 +13,7 @@ class Alert(BaseModel):
     name: str
     created_at: datetime
     alert_type: AlertType
-    acked: bool = False
+    acked: bool
     description: str | None = None
     url: AnyHttpUrl | None = None
 

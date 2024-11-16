@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AlertList from './components/AlertList.vue'
-import PageTitle from './components/PageTitle.vue';
+import PageTitle from './components/PageTitle.vue'
 </script>
 
 <template>
