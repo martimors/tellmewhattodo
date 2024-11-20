@@ -1,0 +1,35 @@
+{
+  "listeners": {
+    "*:80": {
+      "pass": "routes"
+    }
+  },
+
+  "routes": [
+    {
+      "match": {
+        "uri": ["/api*"]
+      },
+      "action": {
+        "pass": "applications/fastapi"
+      }
+    },
+    {
+      "match": {
+        "uri": "/*"
+      },
+      "action": {
+        "share": "/www/static$uri"
+      }
+    }
+  ],
+  "applications": {
+    "fastapi": {
+      "type": "python 3.11",
+      "path": "/var/app",
+      "module": "tellmewhattodo.api",
+      "callable": "app"
+    }
+  },
+  "access_log": "/dev/stdout"
+}

@@ -9,7 +9,7 @@ import { BiGithub, RiQuestionnaireLine } from 'oh-vue-icons/icons'
 import { client } from '@/client/services.gen'
 
 client.setConfig({
-  baseUrl: 'http://localhost:8000',
+  baseUrl: './api',  // TODO: This should be using the env vars in Vite
 })
 
 addIcons(BiGithub, RiQuestionnaireLine)
