@@ -25,10 +25,17 @@
   ],
   "applications": {
     "fastapi": {
-      "type": "python 3.11",
+      "type": "python 3.12",
       "path": "/var/app",
       "module": "tellmewhattodo.api",
       "callable": "app"
+    },
+    "worker": {
+      "type": "python 3.12",
+      "path": "/var/app",
+      "module": "tellmewhattodo.tasks",
+      "callable": "run_celery_worker",
+      "stdout": "/dev/stdout"
     }
   },
   "access_log": "/dev/stdout"

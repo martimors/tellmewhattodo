@@ -1,36 +1,34 @@
+from __future__ import annotations
+
 from logging import getLogger
 from pathlib import Path
 
 import yaml
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+from tellmewhattodo.models import AlertType
 
 logger = getLogger(__name__)
 
 
 class ExtractorJob(BaseModel):
-    type: str
-    config: dict[str, int | str | float]
+    type_: AlertType = Field(alias="type")
+    config: dict[str, str]
 
 
-class TellMe(BaseSettings):
-    extractors: list[ExtractorJob] = []
+class Settings(BaseSettings):
+    extractor_job_config_path: Path = Path.cwd() / "extractors.yml"
+    rabbitmq_dsn: str = "pyamqp://guest@localhost//"
 
     model_config = SettingsConfigDict(env_prefix="TELLME_")
 
 
-def get_config() -> TellMe:
-    extractor_config_path = Path.cwd() / "tellme.yml"
-    if extractor_config_path.exists() and extractor_config_path.is_file():
-        logger.info("Found %s, parsing as config", extractor_config_path)
-        with extractor_config_path.open("r") as config:
-            extractor_config = TellMe.model_validate(yaml.safe_load(config))
-    else:
-        logger.warning("Did not find %s, proceeding without", extractor_config_path)
-        extractor_config = TellMe()
+class ExtractorJobConfig(BaseModel):
+    extractors: list[ExtractorJob]
 
-    logger.debug("Parsed config as %s", str(extractor_config.model_dump()))
-    return extractor_config
-
-
-config = get_config()
+    @classmethod
+    def from_yaml_file(cls, extractor_job_config_path: Path) -> ExtractorJobConfig:
+        logger.info("Parsing extractor config file at %s", extractor_job_config_path)
+        with extractor_job_config_path.open("r") as config:
+            return ExtractorJobConfig.model_validate(yaml.safe_load(config))

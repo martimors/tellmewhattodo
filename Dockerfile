@@ -3,7 +3,7 @@ WORKDIR /var/app
 COPY . .
 RUN npm run build
 
-FROM unit:1.33.0-python3.11
+FROM unit:python3.12
 
 
 WORKDIR /var/app

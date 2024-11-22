@@ -15,4 +15,5 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./ui/src', import.meta.url))
     },
   },
+  publicDir: "./ui/public"
 })

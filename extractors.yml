@@ -1,16 +1,16 @@
 extractors:
-  - type: GitHubReleaseExtractor
+  - type: github
     config:
       repository: dingobar/charts
-  - type: GitHubReleaseExtractor
+  - type: github
     config:
       repository: apache/airflow
-  - type: GitHubReleaseExtractor
+  - type: github
     config:
       repository: jupyterhub/zero-to-jupyterhub-k8s
-  - type: GitHubReleaseExtractor
+  - type: github
     config:
       repository: mlflow/mlflow
-  - type: GitHubReleaseExtractor
+  - type: github
     config:
       repository: meltano/meltano

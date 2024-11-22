@@ -1,33 +1,27 @@
-from collections.abc import Generator
 from os import environ
 from typing import Annotated
 
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import create_engine, select
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from tellmewhattodo.db import get_db_session
 from tellmewhattodo.models import Alert
-from tellmewhattodo.schemas import AlertTable, Base
+from tellmewhattodo.schemas import AlertTable
+from tellmewhattodo.tasks import extractor_task
 
-origins = ["http://localhost:5173"]
+origins = environ.get("CORS_ORIGIN") or []
 
-app = FastAPI(title="Tell Me What To Do API", root_path=environ.get("API_ROOT_PATH") or "")
+app = FastAPI(
+    title="Tell Me What To Do API",
+    root_path=environ.get("API_ROOT_PATH") or "",
+)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_methods=["GET", "PATCH"],
 )
-
-engine = create_engine("sqlite:///database.db")
-Base.metadata.create_all(engine)
-
-
-def get_db_session() -> Generator[Session]:
-    with Session(engine) as session:
-        yield session
-        session.commit()
-
 
 DbDep = Annotated[Session, Depends(get_db_session)]
 
@@ -50,3 +44,8 @@ def ack_alert(db: DbDep, alert_id: str, acked: bool) -> None:  # noqa: FBT001 al
     if not alert:
         raise HTTPException(status_code=404)
     alert.acked = acked
+
+
+@app.post("/")
+def start_alerts_check_job() -> None:
+    extractor_task.delay()
