@@ -1,4 +1,3 @@
-import sys
 from abc import ABC, abstractmethod
 from logging import getLogger
 from os import getenv
@@ -7,10 +6,9 @@ import requests
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from tellmewhattodo.db import get_db_engine
 from tellmewhattodo.models import Alert, AlertType
 from tellmewhattodo.schemas import AlertTable
-from tellmewhattodo.settings import ExtractorJobConfig, Settings
+from tellmewhattodo.settings import ExtractorJobConfig
 
 logger = getLogger()
 
@@ -74,32 +72,24 @@ def get_extractors(config: ExtractorJobConfig) -> list[BaseExtractor]:
     return extractors
 
 
-def extract_data(extractors: list[BaseExtractor]) -> None:
+def extract_data(extractors: list[BaseExtractor], db: Session) -> None:
     alerts: list[Alert] = []
-    engine = get_db_engine()
-    with Session(engine) as session:
-        existing_ids = [alert.id for alert in session.scalars(select(AlertTable))]
-        for extractor in extractors:
-            alerts.extend(extractor.check())
-        session.add_all(
-            [
-                AlertTable(
-                    id=alert.id,
-                    name=alert.name,
-                    created_at=alert.created_at,
-                    acked=alert.acked,
-                    description=alert.description,
-                    url=str(alert.url),
-                    alert_type=alert.alert_type,
-                )
-                for alert in alerts
-                if alert.id not in existing_ids
-            ],
-        )
-        session.commit()
-
-
-if __name__ == "__main__":
-    settings = Settings()  # type: ignore[reportCallIssue]
-    config = ExtractorJobConfig.from_yaml_file(settings.extractor_job_config_path)
-    extract_data(get_extractors(config))
+    existing_ids = [alert.id for alert in db.scalars(select(AlertTable))]
+    for extractor in extractors:
+        alerts.extend(extractor.check())
+    db.add_all(
+        [
+            AlertTable(
+                id=alert.id,
+                name=alert.name,
+                created_at=alert.created_at,
+                acked=alert.acked,
+                description=alert.description,
+                url=str(alert.url),
+                alert_type=alert.alert_type,
+            )
+            for alert in alerts
+            if alert.id not in existing_ids
+        ],
+    )
+    db.commit()

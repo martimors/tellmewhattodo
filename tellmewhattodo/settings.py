@@ -19,7 +19,8 @@ class ExtractorJob(BaseModel):
 
 class Settings(BaseSettings):
     extractor_job_config_path: Path = Path.cwd() / "extractors.yml"
-    rabbitmq_dsn: str = "pyamqp://guest@localhost//"
+    rabbitmq_dsn: str = "amqp://guest@localhost//"
+    database_location: str = "database.db"
 
     model_config = SettingsConfigDict(env_prefix="TELLME_")
 

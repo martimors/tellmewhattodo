@@ -34,8 +34,7 @@
       "type": "python 3.12",
       "path": "/var/app",
       "module": "tellmewhattodo.tasks",
-      "callable": "run_celery_worker",
-      "stdout": "/dev/stdout"
+      "callable": "run_celery_worker"
     }
   },
   "access_log": "/dev/stdout"

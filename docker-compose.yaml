@@ -3,6 +3,10 @@ services:
     build: .
     ports:
       - 8000:80
+    environment:
+      - TELLME_RABBITMQ_DSN=amqp://guest@rabbitmq//
+    volumes:
+      - ./database.db:/var/app/database.db
   rabbitmq:
     image: rabbitmq:latest
     ports:

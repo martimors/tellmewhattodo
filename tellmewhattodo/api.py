@@ -1,12 +1,11 @@
+import http
 from os import environ
-from typing import Annotated
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import select
-from sqlalchemy.orm import Session
 
-from tellmewhattodo.db import get_db_session
+from tellmewhattodo.dependencies import DbDep
 from tellmewhattodo.models import Alert
 from tellmewhattodo.schemas import AlertTable
 from tellmewhattodo.tasks import extractor_task
@@ -23,7 +22,6 @@ app.add_middleware(
     allow_methods=["GET", "PATCH"],
 )
 
-DbDep = Annotated[Session, Depends(get_db_session)]
 
 
 @app.get("/")
@@ -46,6 +44,6 @@ def ack_alert(db: DbDep, alert_id: str, acked: bool) -> None:  # noqa: FBT001 al
     alert.acked = acked
 
 
-@app.post("/")
+@app.post("/", status_code=http.HTTPStatus.ACCEPTED)
 def start_alerts_check_job() -> None:
     extractor_task.delay()
