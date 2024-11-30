@@ -1,18 +1,13 @@
-```
+```sh
 poetry install
-poetry run tellmewhattodo --help
+docker compose up
 ```
-
-Configuration in [tellme.yml](./tellme.yml) takes presedence, but configuration can also be done with environmental variables prefixed with `TELLME_`.
 
 ## Todo
 
-- Frontend (Vue.js)
-- Tests
-- Push image in CD
-- Configurable db path
-- Run the job in the image
-- Helm?
+- Tests (in CD too)
+- Push images in CD
+- Helm OCI
 
 # tellmewhattodo-ui
 
@@ -65,6 +60,5 @@ npm run lint
 Make sure backend is running, then
 
 ```sh
-npx @hey-api/openapi-ts -i http://localhost:8000/openapi.json -o src/clien
-t -c @hey-api/client-fetch
+npx @hey-api/openapi-ts -i http://localhost:8000/openapi.json -o src/client -c @hey-api/client-fetch
 ```

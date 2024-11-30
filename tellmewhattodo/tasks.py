@@ -18,11 +18,12 @@ def get_db_engine() -> Engine:
     settings = get_settings()
     return create_engine(f"sqlite:///{settings.database_location}")
 
+
 settings = get_settings()
 celery = Celery(
     "tasks",
     broker=settings.rabbitmq_dsn,
-    broker_connection_retry_on_startup=False,
+    broker_connection_retry_on_startup=True,
 )
 
 
@@ -33,7 +34,6 @@ def extractor_task() -> None:
     )
     with Session(get_db_engine()) as db:
         extract_data(get_extractors(extractor_jobs), db)
-
 
 
 def run_celery_worker() -> None:

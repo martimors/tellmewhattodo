@@ -23,7 +23,9 @@ def get_db_engine(settings: SettingsDep) -> Engine:
     Base.metadata.create_all(engine)
     return engine
 
+
 DbEngineDep = Annotated[Engine, Depends(get_db_engine)]
+
 
 def get_db_session(engine: DbEngineDep) -> Generator[Session]:
     with Session(engine) as session:

@@ -23,7 +23,6 @@ app.add_middleware(
 )
 
 
-
 @app.get("/")
 def get_alerts(db: DbDep) -> list[Alert]:
     alerts = db.scalars(
@@ -46,4 +45,4 @@ def ack_alert(db: DbDep, alert_id: str, acked: bool) -> None:  # noqa: FBT001 al
 
 @app.post("/", status_code=http.HTTPStatus.ACCEPTED)
 def start_alerts_check_job() -> None:
-    extractor_task.delay()
+    extractor_task.delay()  # type: ignore[reportFunctionMemberAccess]
