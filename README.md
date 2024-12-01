@@ -6,7 +6,6 @@ docker compose up
 ## Todo
 
 - Tests (in CD too)
-- Push images in CD
 - Helm OCI
 
 # tellmewhattodo-ui
