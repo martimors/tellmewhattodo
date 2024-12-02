@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "tellmewhattodo.fullname" . }}
+  labels:
+    {{- include "tellmewhattodo.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - nodePort: {{ .Values.service.nodePort }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "tellmewhattodo.selectorLabels" . | nindent 4 }}
