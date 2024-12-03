@@ -1,0 +1,14 @@
+replicaCount: 1
+images:
+  ui: dingobar/tellmewhattodo-ui:latest
+  backend: dingobar/tellmewhattodo:latest
+  rabbitmq: rabbitmq:latest
+pvc:
+  storageClassName: ~
+  storage: 100Mi
+service:
+  type: NodePort
+
+rabbitmq:
+  persistence:
+    enabled: false

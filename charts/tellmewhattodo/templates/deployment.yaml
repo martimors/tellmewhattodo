@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "tellmewhattodo.fullname" . }}
+  labels:
+    {{- include "tellmewhattodo.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "tellmewhattodo.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "tellmewhattodo.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}-ui
+          image: {{ .Values.images.ui }}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+              name: nginx-config
+        - name: {{ .Chart.Name }}-backend
+          image: {{ .Values.images.backend }}
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TELLME_DATABASE_LOCATION
+              value: /srv/data/database.db
+            - name: TELLME_RABBITMQ_DSN
+              value: amqp://user@{{ include "tellmewhattodo.fullname" . }}-rabbitmq:5672
+            - name: TELLME_EXTRACTOR_JOB_CONFIG_PATH
+              value: fixme
+          volumeMounts:
+            - mountPath: /srv/data
+              name: data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ include "tellmewhattodo.fullname" . }}
+        - name: nginx-config
+          configMap:
+            name: {{ include "tellmewhattodo.fullname" . }}
+            items:
+            - key: nginx.conf
+              path: nginx.conf
