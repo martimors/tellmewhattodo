@@ -23,8 +23,3 @@ repos:
           - "requirements.txt"
           - "-o"
           - "requirements.txt"
-  - repo: local
-    hooks:
-      - id: nginx-conf-from-template
-        name: "Generate compose nginx config from template"
-        entry: API_HOST=tmwtd envsubst < nginx.template.conf > nginx.compose.conf
