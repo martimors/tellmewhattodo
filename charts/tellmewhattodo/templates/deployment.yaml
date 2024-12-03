@@ -33,7 +33,7 @@ spec:
             - name: TELLME_DATABASE_LOCATION
               value: /srv/data/database.db
             - name: TELLME_RABBITMQ_DSN
-              value: amqp://guest@fixme
+              value: amqp://user@{{ include "tellmewhattodo.fullname" . }}-rabbitmq:5672
             - name: TELLME_EXTRACTOR_JOB_CONFIG_PATH
               value: fixme
           volumeMounts:
@@ -44,7 +44,8 @@ spec:
           persistentVolumeClaim:
             claimName: {{ include "tellmewhattodo.fullname" . }}
         - name: nginx-config
-          configMap: {{ include "tellmewhattodo.fullname" . }}
+          configMap:
+            name: {{ include "tellmewhattodo.fullname" . }}
+            items:
             - key: nginx.conf
-              path: default.conf
-
+              path: nginx.conf

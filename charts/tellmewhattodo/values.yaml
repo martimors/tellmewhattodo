@@ -8,4 +8,7 @@ pvc:
   storage: 100Mi
 service:
   type: NodePort
-  nodePort: 5000
+
+rabbitmq:
+  persistence:
+    enabled: false
