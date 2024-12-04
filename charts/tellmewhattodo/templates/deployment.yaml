@@ -32,8 +32,15 @@ spec:
           env:
             - name: TELLME_DATABASE_LOCATION
               value: /srv/data/database.db
-            - name: TELLME_RABBITMQ_DSN
-              value: amqp://user@{{ include "tellmewhattodo.fullname" . }}-rabbitmq:5672
+            - name: TELLME_RABBITMQ_HOST
+              value: {{ .Release.Name }}-rabbitmq:5672
+            - name: TELLME_RABBITMQ_USERNAME
+              value: user
+            - name: TELLME_RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.name }}-rabbitmq
+                  key: rabbitmq-password
             - name: TELLME_EXTRACTOR_JOB_CONFIG_PATH
               value: fixme
           volumeMounts:
