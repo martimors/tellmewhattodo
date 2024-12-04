@@ -12,3 +12,22 @@ service:
 rabbitmq:
   persistence:
     enabled: false
+
+job:
+  config:
+    extractors:
+      - type: github
+        config:
+          repository: dingobar/charts
+      - type: github
+        config:
+          repository: apache/airflow
+      - type: github
+        config:
+          repository: jupyterhub/zero-to-jupyterhub-k8s
+      - type: github
+        config:
+          repository: mlflow/mlflow
+      - type: github
+        config:
+          repository: meltano/meltano

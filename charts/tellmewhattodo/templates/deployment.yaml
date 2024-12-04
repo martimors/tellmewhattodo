@@ -24,8 +24,8 @@ spec:
               protocol: TCP
           volumeMounts:
             - mountPath: /etc/nginx/conf.d/default.conf
-              subPath: default.conf
-              name: nginx-config
+              subPath: nginx.conf
+              name: config
         - name: {{ .Chart.Name }}-backend
           image: {{ .Values.images.backend }}
           imagePullPolicy: IfNotPresent
@@ -33,26 +33,28 @@ spec:
             - name: TELLME_DATABASE_LOCATION
               value: /srv/data/database.db
             - name: TELLME_RABBITMQ_HOST
-              value: {{ .Release.Name }}-rabbitmq:5672
+              value: {{ .Release.Name }}-rabbitmq
+            - name: TELLME_RABBITMQ_PORT
+              value: "5672"
             - name: TELLME_RABBITMQ_USERNAME
               value: user
             - name: TELLME_RABBITMQ_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Release.name }}-rabbitmq
+                  name: {{ .Release.Name }}-rabbitmq
                   key: rabbitmq-password
             - name: TELLME_EXTRACTOR_JOB_CONFIG_PATH
-              value: fixme
+              value: /srv/config/config.yaml
           volumeMounts:
             - mountPath: /srv/data
               name: data
+            - mountPath: /srv/config/config.yaml
+              subPath: config.yaml
+              name: config
       volumes:
         - name: data
           persistentVolumeClaim:
             claimName: {{ include "tellmewhattodo.fullname" . }}
-        - name: nginx-config
+        - name: config
           configMap:
             name: {{ include "tellmewhattodo.fullname" . }}
-            items:
-            - key: nginx.conf
-              path: nginx.conf

@@ -23,3 +23,5 @@ data:
        proxy_redirect off;
      }
     }
+  config.yaml: |
+    {{- .Values.job.config | toYaml | nindent 4 }}
