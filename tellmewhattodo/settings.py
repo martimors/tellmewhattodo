@@ -4,7 +4,7 @@ from logging import getLogger
 from pathlib import Path
 
 import yaml
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from tellmewhattodo.models import AlertType
@@ -19,7 +19,10 @@ class ExtractorJob(BaseModel):
 
 class Settings(BaseSettings):
     extractor_job_config_path: Path = Path.cwd() / "extractors.yml"
-    rabbitmq_dsn: str = "amqp://guest@localhost//"
+    rabbitmq_host: str = "localhost"
+    rabbitmq_username: str = "guest"
+    rabbitmq_password: SecretStr | None = None
+    rabbitmq_port: int = 5672
     database_location: str = "database.db"
 
     model_config = SettingsConfigDict(env_prefix="TELLME_")

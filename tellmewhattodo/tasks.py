@@ -1,6 +1,7 @@
 from functools import cache
 
 from celery import Celery
+from pydantic import AmqpDsn
 from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import Session
 
@@ -20,9 +21,18 @@ def get_db_engine() -> Engine:
 
 
 settings = get_settings()
+rmq_dsn = AmqpDsn.build(
+    scheme="amqp",
+    username=settings.rabbitmq_username,
+    password=settings.rabbitmq_password.get_secret_value()
+    if settings.rabbitmq_password
+    else None,
+    host=settings.rabbitmq_host,
+    port=settings.rabbitmq_port,
+)
 celery = Celery(
     "tasks",
-    broker=settings.rabbitmq_dsn,
+    broker=str(rmq_dsn),
     broker_connection_retry_on_startup=True,
 )
 
