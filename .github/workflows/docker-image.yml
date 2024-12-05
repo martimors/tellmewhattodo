@@ -35,3 +35,13 @@ jobs:
         file: ./${{ matrix.app.dockerfile }}
         push: true
         tags: dingobar/${{ matrix.app.image }}:latest
+  chart:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: azure/setup-helm@v4.2.0
+        id: install-helm
+      - name: Build and push OCI helm chart
+        id: helm-build-push
+        run: |
+          echo ${{ secrets.DOCKER_PASSWORD }} | helm registry login registry-1.docker.io -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+          ./build-and-push-chart.sh
