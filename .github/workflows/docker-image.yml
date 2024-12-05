@@ -31,7 +31,8 @@ jobs:
         push: true
         tags: dingobar/${{ matrix.app.image }}:latest
   chart:
-    if:  ${{ success() }}
+    needs:
+      - build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
