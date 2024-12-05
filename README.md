@@ -1,63 +1,34 @@
+# TMWTD
+
+Simple app with a UI that keeps track of github releases automatically.
+
+Simple ack feature that lets me tick off releases I've already either installed or
+want to skip.
+
+For home use.
+
+## Quickstart locally
+
 ```sh
 poetry install
-docker compose up
+npm install
+
+# Start in docker
+docker compose up --build
 ```
 
-## Todo
-
-- Tests (in CD too)
-- Helm OCI
-
-# tellmewhattodo-ui
-
-This template should help get you started developing with Vue 3 in Vite.
-
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
+## Install with helm
 
 ```sh
-npm install
+helm upgrade --install tmwtd oci://registry-1.docker.io/dingobar/tmwtd
 ```
 
-### Compile and Hot-Reload for Development
+## UI Compile and Hot-Reload for Development
 
 ```sh
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+## TODO
 
-```sh
-npm run build
-```
-
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
-npm run test:unit
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
-
-### Generate API client
-
-Make sure backend is running, then
-
-```sh
-npx @hey-api/openapi-ts -i http://localhost:8000/openapi.json -o src/client -c @hey-api/client-fetch
-```
+- Scheduler (k8s cron using curl)
