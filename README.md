@@ -10,6 +10,7 @@ For home use.
 ## Quickstart locally
 
 ```sh
+cp .env.example .env
 poetry install
 npm install
 

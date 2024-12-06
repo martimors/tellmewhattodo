@@ -2,13 +2,16 @@ replicaCount: 1
 images:
   ui: dingobar/tellmewhattodo-ui:latest
   backend: dingobar/tellmewhattodo:latest
-  rabbitmq: rabbitmq:latest
+  job: curlimages/curl:latest
 pvc:
   storageClassName: ~
   storage: 100Mi
 service:
   type: NodePort
+cronjob:
+  crontab: "5 4 * * *"
 
+# Dependencies
 rabbitmq:
   persistence:
     enabled: false
