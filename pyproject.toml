@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "tellmewhattodo"
-version = "3.0.0"
-description = "Simple app that checks for what to do and presents that in a website"
+version = "3.0.2"
+description = "Python backend for TMWTD"
 authors = ["Martin Morset"]
 license = "Apache 2.0"
 packages = [{ include = "tellmewhattodo" }]

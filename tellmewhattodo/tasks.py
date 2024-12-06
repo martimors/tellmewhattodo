@@ -6,6 +6,7 @@ from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import Session
 
 from tellmewhattodo.extractor import extract_data, get_extractors
+from tellmewhattodo.schemas import Base
 from tellmewhattodo.settings import ExtractorJobConfig, Settings
 
 
@@ -17,7 +18,9 @@ def get_settings() -> Settings:
 @cache
 def get_db_engine() -> Engine:
     settings = get_settings()
-    return create_engine(f"sqlite:///{settings.database_location}")
+    engine = create_engine(f"sqlite:///{settings.database_location}")
+    Base.metadata.create_all(engine)
+    return engine
 
 
 settings = get_settings()
@@ -42,7 +45,8 @@ def extractor_task() -> None:
     extractor_jobs = ExtractorJobConfig.from_yaml_file(
         settings.extractor_job_config_path,
     )
-    with Session(get_db_engine()) as db:
+    engine = get_db_engine()
+    with Session(engine) as db:
         extract_data(get_extractors(extractor_jobs), db)
 
 

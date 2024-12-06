@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "tellmewhattodo.fullname" . }}
+spec:
+  schedule: {{ .Values.cronjob.crontab }}
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      template:
+        spec:
+          containers:
+          - name: {{ .Chart.Name }}-cronjob
+            image: {{ .Values.images.job }}
+            imagePullPolicy: IfNotPresent
+            args:
+            - --request
+            - POST
+            - http://{{ include "tellmewhattodo.fullname" . }}:80/api/
+          restartPolicy: Never
