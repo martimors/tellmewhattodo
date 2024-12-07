@@ -12,8 +12,7 @@ spec:
       name: http
       {{- if .Values.service.nodePort }}
       nodePort: {{ .Values.service.nodePort }}
-      {{- else }}
-      port: 80
       {{- end }}
+      port: 8080
   selector:
     {{- include "tellmewhattodo.selectorLabels" . | nindent 4 }}
