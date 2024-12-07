@@ -16,5 +16,5 @@ spec:
             args:
             - --request
             - POST
-            - http://{{ include "tellmewhattodo.fullname" . }}:80/api/
+            - http://{{ include "tellmewhattodo.fullname" . }}:8080/api/
           restartPolicy: Never
