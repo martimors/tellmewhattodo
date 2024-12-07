@@ -27,7 +27,7 @@ class GitHubReleaseExtractor(BaseExtractor):
         auth_token = getenv("GITHUB_PAT_TOKEN")
         auth = ("token", auth_token) if auth_token else None
         r = requests.get(
-            f"https://api.github.com/repos/{self.REPOSITORY}/releases",
+            f"https://api.github.com/repos/{self.REPOSITORY}/releases/latest",
             auth=auth,
             timeout=10,
         )
@@ -37,26 +37,21 @@ class GitHubReleaseExtractor(BaseExtractor):
             logger.exception("Extraction failed for %s", self.REPOSITORY)
             return []
 
-        body = r.json()
+        release = r.json()
 
-        alerts = []
-        for release in body:
-            if release["prerelease"] or release["draft"]:
-                continue
-            alerts.append(
-                Alert(
-                    id=str(release["id"]),
-                    name=release.get("name")
-                    or f"{self.REPOSITORY}-{release['tag_name']}",
-                    description=f"{self.REPOSITORY} released {release['name']}",
-                    created_at=release["created_at"],
-                    acked=False,
-                    url=release["html_url"],
-                    alert_type=AlertType.GITHUB,
-                ),
-            )
+        if release["prerelease"] or release["draft"]:
+            return []
+        alert = Alert(
+            id=str(release["id"]),
+            name=release.get("name") or f"{self.REPOSITORY}-{release['tag_name']}",
+            description=f"{self.REPOSITORY} released {release['name']}",
+            created_at=release["created_at"],
+            acked=False,
+            url=release["html_url"],
+            alert_type=AlertType.GITHUB,
+        )
 
-        return alerts
+        return [alert]
 
 
 def get_extractors(config: ExtractorJobConfig) -> list[BaseExtractor]:
