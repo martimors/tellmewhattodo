@@ -1,6 +1,9 @@
+import re
 from abc import ABC, abstractmethod
+from collections.abc import Generator
 from logging import getLogger
 from os import getenv
+from typing import Any
 
 import requests
 from sqlalchemy import select
@@ -8,7 +11,11 @@ from sqlalchemy.orm import Session
 
 from tellmewhattodo.models import Alert, AlertType
 from tellmewhattodo.schemas import AlertTable
-from tellmewhattodo.settings import ExtractorJobConfig
+from tellmewhattodo.settings import (
+    DockerHubExtractorJobConfig,
+    ExtractorJobConfig,
+    GitHubExtractorJobConfig,
+)
 
 logger = getLogger()
 
@@ -20,21 +27,21 @@ class BaseExtractor(ABC):
 
 
 class GitHubReleaseExtractor(BaseExtractor):
-    def __init__(self, repository: str) -> None:
-        self.REPOSITORY = repository
+    def __init__(self, config: GitHubExtractorJobConfig) -> None:
+        self.repository = config.repository
 
     def check(self) -> list[Alert]:
         auth_token = getenv("GITHUB_PAT_TOKEN")
         auth = ("token", auth_token) if auth_token else None
         r = requests.get(
-            f"https://api.github.com/repos/{self.REPOSITORY}/releases/latest",
+            f"https://api.github.com/repos/{self.repository}/releases/latest",
             auth=auth,
             timeout=10,
         )
         try:
             r.raise_for_status()
         except requests.HTTPError:
-            logger.exception("Extraction failed for %s", self.REPOSITORY)
+            logger.exception("Extraction failed for %s", self.repository)
             return []
 
         release = r.json()
@@ -43,8 +50,8 @@ class GitHubReleaseExtractor(BaseExtractor):
             return []
         alert = Alert(
             id=str(release["id"]),
-            name=release.get("name") or f"{self.REPOSITORY}-{release['tag_name']}",
-            description=f"{self.REPOSITORY} released {release['name']}",
+            name=release.get("name") or f"{self.repository}-{release['tag_name']}",
+            description=f"{self.repository} released {release['name']} on GitHub",
             created_at=release["created_at"],
             acked=False,
             url=release["html_url"],
@@ -54,14 +61,74 @@ class GitHubReleaseExtractor(BaseExtractor):
         return [alert]
 
 
+class DockerHubExtractor(BaseExtractor):
+    def __init__(self, config: DockerHubExtractorJobConfig) -> None:
+        self.repository = config.repository
+        self.artifact_type = config.artifact_type
+
+    def _get_paginated_tags(self) -> Generator[list[dict[Any, Any]], None]:
+        next_page = f"https://hub.docker.com/v2/repositories/{self.repository}/tags?page_size=100"
+        while next_page is not None:
+            r = requests.get(
+                next_page,
+                timeout=10,
+            )
+            try:
+                r.raise_for_status()
+            except requests.HTTPError:
+                logger.exception("Extraction failed for %s", self.repository)
+
+            t = r.json()
+
+            next_page = t.get("next")
+            yield t["results"]
+
+    @staticmethod
+    def _is_extended_plain_semver(version: str) -> bool:
+        extended_semver_pattern = r"^(0|[1-9]\d*)(\.(0|[1-9]\d*))*$"
+        return bool(re.match(extended_semver_pattern, version))
+
+    @staticmethod
+    def _semver_sort_key(tag: dict[Any, Any]) -> tuple[int, ...]:
+        parts = tag["name"].split(".")
+        return tuple(int(part) for part in parts)
+
+    def check(self) -> list[Alert]:
+        tags = []
+        for tag in self._get_paginated_tags():
+            tags.extend(tag)
+        chart_tags = [t for t in tags if t["content_type"] == self.artifact_type]
+        semver_tags = [
+            t for t in chart_tags if self._is_extended_plain_semver(t["name"])
+        ]
+        sorted_tags = sorted(semver_tags, key=self._semver_sort_key)
+        latest_tag = sorted_tags[-1]
+        alert = Alert(
+            id=str(latest_tag["id"]),
+            name=f"{latest_tag['name']}",
+            created_at=latest_tag["last_updated"],
+            alert_type=AlertType.DOCKERHUB_HELM,
+            acked=False,
+            description=(
+                f"{self.artifact_type} {self.repository} released "
+                f"{latest_tag['name']} on Docker Hub"
+            ),
+            url=f"https://hub.docker.com/r/{self.repository}/tags",  # type: ignore[reportArgumentType]
+        )
+
+        return [alert]
+
+
 def get_extractors(config: ExtractorJobConfig) -> list[BaseExtractor]:
     extractors = []
     for extractor in config.extractors:
-        if extractor.type_ == AlertType.GITHUB:
-            instance = GitHubReleaseExtractor(extractor.config["repository"])
+        if isinstance(extractor, GitHubExtractorJobConfig):
+            instance = GitHubReleaseExtractor(extractor)
+        elif isinstance(extractor, DockerHubExtractorJobConfig):
+            instance = DockerHubExtractor(extractor)
         else:
             msg = f"Unknown extractor type {extractor.type_}"
-            raise ValueError(msg)
+            raise TypeError(msg)
         extractors.append(instance)
 
     return extractors

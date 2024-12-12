@@ -1,20 +1,30 @@
 from __future__ import annotations
 
+from enum import StrEnum
 from logging import getLogger
 from pathlib import Path
+from typing import Literal
 
 import yaml
 from pydantic import BaseModel, Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from tellmewhattodo.models import AlertType
-
 logger = getLogger(__name__)
 
 
-class ExtractorJob(BaseModel):
-    type_: AlertType = Field(alias="type")
-    config: dict[str, str]
+class ArtifactType(StrEnum):
+    HELM = "helm"
+
+
+class DockerHubExtractorJobConfig(BaseModel):
+    type: Literal["oci"] = Field(alias="type")
+    repository: str
+    artifact_type: ArtifactType
+
+
+class GitHubExtractorJobConfig(BaseModel):
+    type_: Literal["github"] = Field(alias="type")
+    repository: str
 
 
 class Settings(BaseSettings):
@@ -29,7 +39,7 @@ class Settings(BaseSettings):
 
 
 class ExtractorJobConfig(BaseModel):
-    extractors: list[ExtractorJob]
+    extractors: list[GitHubExtractorJobConfig | DockerHubExtractorJobConfig]
 
     @classmethod
     def from_yaml_file(cls, extractor_job_config_path: Path) -> ExtractorJobConfig:
