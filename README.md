@@ -24,12 +24,17 @@ docker compose up --build
 helm upgrade --install tmwtd oci://registry-1.docker.io/dingobar/tmwtd
 ```
 
+See [here](./charts/tmwtd/values.yaml) for possible values.
+
 ## UI Compile and Hot-Reload for Development
 
 ```sh
 npm run dev
 ```
 
-## TODO
+If the backend contract changes, the API client must be regenerated,
 
-- Scheduler (k8s cron using curl)
+```sh
+# Regenerate API client code for frontend
+npx @hey-api/openapi-ts -i http://localhost:8000/openapi.json -o ui/src/client -c @hey-api/client-fetch
+```
