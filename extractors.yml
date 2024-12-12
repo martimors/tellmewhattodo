@@ -1,16 +1,14 @@
 extractors:
+  - type: oci
+    repository: bitnamicharts/redis
+    artifact_type: helm
   - type: github
-    config:
-      repository: dingobar/charts
+    repository: dingobar/charts
   - type: github
-    config:
-      repository: apache/airflow
+    repository: apache/airflow
   - type: github
-    config:
-      repository: jupyterhub/zero-to-jupyterhub-k8s
+    repository: jupyterhub/zero-to-jupyterhub-k8s
   - type: github
-    config:
-      repository: mlflow/mlflow
+    repository: mlflow/mlflow
   - type: github
-    config:
-      repository: meltano/meltano
+    repository: meltano/meltano

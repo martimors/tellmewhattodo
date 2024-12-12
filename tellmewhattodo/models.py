@@ -6,6 +6,8 @@ from pydantic import AnyHttpUrl, BaseModel, ConfigDict
 
 class AlertType(StrEnum):
     GITHUB = "github"
+    DOCKERHUB = "dockerhub"
+    DOCKERHUB_HELM = "docker_helm"
 
 
 class Alert(BaseModel):
