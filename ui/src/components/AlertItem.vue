@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { dateFormatter } from './datetime'
+import { BButton } from 'bootstrap-vue-next';
 
 const bgColor = computed(() => {
   return props.acked ? '#228100' : '#e0432e'
@@ -38,7 +39,7 @@ const just_date = computed(() => {
       <span class="date">{{ just_date }}</span>
     </div>
     <div class="details">{{ description }}</div>
-    <button @click="$emit('ack', props.id)">{{ props.acked ? 'unack' : 'ack' }}</button>
+    <BButton @click="$emit('ack', props.id)">{{ props.acked ? 'unack' : 'ack' }}</BButton>
   </div>
 </template>
 
