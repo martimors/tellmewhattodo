@@ -12,6 +12,7 @@ class AlertType(StrEnum):
 
 class Alert(BaseModel):
     id: str
+    extractor_id: str
     name: str
     created_at: datetime
     alert_type: AlertType

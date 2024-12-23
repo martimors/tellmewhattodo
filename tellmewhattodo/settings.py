@@ -1,12 +1,13 @@
 from __future__ import annotations
 
+from abc import abstractmethod
 from enum import StrEnum
 from logging import getLogger
 from pathlib import Path
 from typing import Literal
 
 import yaml
-from pydantic import BaseModel, Field, SecretStr
+from pydantic import BaseModel, Field, SecretStr, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 logger = getLogger(__name__)
@@ -16,15 +17,33 @@ class ArtifactType(StrEnum):
     HELM = "helm"
 
 
-class DockerHubExtractorJobConfig(BaseModel):
-    type: Literal["oci"] = Field(alias="type")
+class AbstractJobConfig(BaseModel):
+    @property
+    @computed_field
+    @abstractmethod
+    def extractor_id(self) -> str:
+        pass
+
+
+class DockerHubExtractorJobConfig(AbstractJobConfig):
+    type_: Literal["oci"] = Field(alias="type")
     repository: str
     artifact_type: ArtifactType
 
+    @property
+    def extractor_id(self) -> str:
+        return (
+            f"{self.type_}:{self.artifact_type}:{self.repository.replace("/", "-")}"
+        ).lower()
 
-class GitHubExtractorJobConfig(BaseModel):
+
+class GitHubExtractorJobConfig(AbstractJobConfig):
     type_: Literal["github"] = Field(alias="type")
     repository: str
+
+    @property
+    def extractor_id(self) -> str:
+        return f"{self.type_}:{self.repository.replace("/", "-")}".lower()
 
 
 class Settings(BaseSettings):

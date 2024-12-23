@@ -10,6 +10,7 @@ class Base(DeclarativeBase):
 class AlertTable(Base):
     __tablename__ = "alert"
     id: Mapped[str] = mapped_column(primary_key=True)
+    extractor_id: Mapped[str]
     name: Mapped[str]
     created_at: Mapped[datetime]
     acked: Mapped[bool]

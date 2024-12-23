@@ -28,20 +28,20 @@ class BaseExtractor(ABC):
 
 class GitHubReleaseExtractor(BaseExtractor):
     def __init__(self, config: GitHubExtractorJobConfig) -> None:
-        self.repository = config.repository
+        self.config = config
 
     def check(self) -> list[Alert]:
         auth_token = getenv("GITHUB_PAT_TOKEN")
         auth = ("token", auth_token) if auth_token else None
         r = requests.get(
-            f"https://api.github.com/repos/{self.repository}/releases/latest",
+            f"https://api.github.com/repos/{self.config.repository}/releases/latest",
             auth=auth,
             timeout=10,
         )
         try:
             r.raise_for_status()
         except requests.HTTPError:
-            logger.exception("Extraction failed for %s", self.repository)
+            logger.exception("Extraction failed for %s", self.config.repository)
             return []
 
         release = r.json()
@@ -50,8 +50,11 @@ class GitHubReleaseExtractor(BaseExtractor):
             return []
         alert = Alert(
             id=str(release["id"]),
-            name=release.get("name") or f"{self.repository}-{release['tag_name']}",
-            description=f"{self.repository} released {release['name']} on GitHub",
+            extractor_id=self.config.extractor_id,
+            name=release.get("name")
+            or f"{self.config.repository}-{release['tag_name']}",
+            description=f"{self.config.repository} released "
+            f"{release['name']} on GitHub",
             created_at=release["created_at"],
             acked=False,
             url=release["html_url"],
@@ -63,11 +66,10 @@ class GitHubReleaseExtractor(BaseExtractor):
 
 class DockerHubExtractor(BaseExtractor):
     def __init__(self, config: DockerHubExtractorJobConfig) -> None:
-        self.repository = config.repository
-        self.artifact_type = config.artifact_type
+        self.config = config
 
     def _get_paginated_tags(self) -> Generator[list[dict[Any, Any]], None]:
-        next_page = f"https://hub.docker.com/v2/repositories/{self.repository}/tags?page_size=100"
+        next_page = f"https://hub.docker.com/v2/repositories/{self.config.repository}/tags?page_size=100"
         while next_page is not None:
             r = requests.get(
                 next_page,
@@ -76,7 +78,7 @@ class DockerHubExtractor(BaseExtractor):
             try:
                 r.raise_for_status()
             except requests.HTTPError:
-                logger.exception("Extraction failed for %s", self.repository)
+                logger.exception("Extraction failed for %s", self.config.repository)
 
             t = r.json()
 
@@ -97,7 +99,7 @@ class DockerHubExtractor(BaseExtractor):
         tags = []
         for tag in self._get_paginated_tags():
             tags.extend(tag)
-        chart_tags = [t for t in tags if t["content_type"] == self.artifact_type]
+        chart_tags = [t for t in tags if t["content_type"] == self.config.artifact_type]
         semver_tags = [
             t for t in chart_tags if self._is_extended_plain_semver(t["name"])
         ]
@@ -106,14 +108,15 @@ class DockerHubExtractor(BaseExtractor):
         alert = Alert(
             id=str(latest_tag["id"]),
             name=f"{latest_tag['name']}",
+            extractor_id=self.config.extractor_id,
             created_at=latest_tag["last_updated"],
             alert_type=AlertType.DOCKERHUB_HELM,
             acked=False,
             description=(
-                f"{self.artifact_type} {self.repository} released "
+                f"{self.config.artifact_type} {self.config.repository} released "
                 f"{latest_tag['name']} on Docker Hub"
             ),
-            url=f"https://hub.docker.com/r/{self.repository}/tags",  # type: ignore[reportArgumentType]
+            url=f"https://hub.docker.com/r/{self.config.repository}/tags",  # type: ignore[reportArgumentType]
         )
 
         return [alert]
@@ -143,6 +146,7 @@ def extract_data(extractors: list[BaseExtractor], db: Session) -> None:
         [
             AlertTable(
                 id=alert.id,
+                extractor_id=alert.extractor_id,
                 name=alert.name,
                 created_at=alert.created_at,
                 acked=alert.acked,
