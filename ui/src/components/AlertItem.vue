@@ -3,10 +3,6 @@ import { computed, ref } from 'vue'
 import { dateFormatter } from './datetime'
 import { BButton, BListGroupItem } from 'bootstrap-vue-next'
 
-const bgColor = computed(() => {
-  return props.acked ? '#228100' : '#e0432e'
-})
-
 const props = defineProps<{
   id: string
   name: string
@@ -18,7 +14,9 @@ const props = defineProps<{
 }>()
 
 const icon = computed(() => {
-  return props.alert_type == 'github' ? 'bi-github' : 'ri-questionnaire-line'
+  if (props.alert_type == 'github') return 'bi-github'
+  else if (props.alert_type == 'docker_helm') return 'vi-file-type-helm'
+  else return 'ri-questionnaire-line'
 })
 
 const just_date = computed(() => {
