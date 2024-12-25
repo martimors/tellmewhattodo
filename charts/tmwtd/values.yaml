@@ -1,7 +1,7 @@
 replicaCount: 1
 images:
-  ui: dingobar/tellmewhattodo-ui:6.0.0
-  backend: dingobar/tellmewhattodo:6.0.0
+  ui: dingobar/tellmewhattodo-ui:6.0.1
+  backend: dingobar/tellmewhattodo:6.0.1
   job: curlimages/curl:latest
 pvc:
   storageClassName: ~

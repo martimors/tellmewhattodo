@@ -2,6 +2,7 @@
 import { onBeforeMount, ref, type Ref } from 'vue'
 import AlertItem from './AlertItem.vue'
 import { ackAlertAlertIdPatch, getAlertsGet, type Alert } from '@/client'
+import { BListGroup } from 'bootstrap-vue-next'
 
 const alertStore: Ref<Array<Alert>> = ref([])
 
@@ -54,16 +55,18 @@ onBeforeMount(initialLoadAlerts)
 </script>
 
 <template>
-  <template v-for="al in alertStore" :key="al.id">
-    <AlertItem
-      @ack="ackAlert"
-      :id="al.id"
-      :name="al.name"
-      :created_at="new Date(al.created_at)"
-      :alert_type="al.alert_type"
-      :acked="al.acked ?? false"
-      :description="al.description ?? ''"
-      :url="al.url"
-    />
-  </template>
+  <BListGroup>
+    <template v-for="al in alertStore" :key="al.id">
+      <AlertItem
+        @ack="ackAlert"
+        :id="al.id"
+        :name="al.name"
+        :created_at="new Date(al.created_at)"
+        :alert_type="al.alert_type"
+        :acked="al.acked ?? false"
+        :description="al.description ?? ''"
+        :url="al.url"
+      />
+    </template>
+  </BListGroup>
 </template>
