@@ -13,7 +13,7 @@ class AlertTable(Base):
     extractor_id: Mapped[str]
     name: Mapped[str]
     created_at: Mapped[datetime]
-    acked: Mapped[bool]
-    description: Mapped[str] = mapped_column(nullable=True)
-    url: Mapped[str] = mapped_column(nullable=True)
+    acked_at: Mapped[datetime | None] = mapped_column(nullable=True)
+    description: Mapped[str | None] = mapped_column(nullable=True)
+    url: Mapped[str | None] = mapped_column(nullable=True)
     alert_type: Mapped[str]
