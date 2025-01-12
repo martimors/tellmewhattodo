@@ -10,7 +10,7 @@ export type Alert = {
     description?: (string | null);
     url?: (string | null);
     last_acked_name?: (string | null);
-    readonly acked: boolean;
+    acked: boolean;
 };
 
 export type AlertType = 'github' | 'dockerhub' | 'docker_helm';
