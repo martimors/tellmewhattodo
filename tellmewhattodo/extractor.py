@@ -56,7 +56,6 @@ class GitHubReleaseExtractor(BaseExtractor):
             description=f"{self.config.repository} released "
             f"{release['name']} on GitHub",
             created_at=release["created_at"],
-            acked=False,
             url=release["html_url"],
             alert_type=AlertType.GITHUB,
         )
@@ -111,7 +110,6 @@ class DockerHubExtractor(BaseExtractor):
             extractor_id=self.config.extractor_id,
             created_at=latest_tag["last_updated"],
             alert_type=AlertType.DOCKERHUB_HELM,
-            acked=False,
             description=(
                 f"{self.config.artifact_type} {self.config.repository} released "
                 f"{latest_tag['name']} on Docker Hub"
@@ -149,7 +147,6 @@ def extract_data(extractors: list[BaseExtractor], db: Session) -> None:
                 extractor_id=alert.extractor_id,
                 name=alert.name,
                 created_at=alert.created_at,
-                acked=alert.acked,
                 description=alert.description,
                 url=str(alert.url),
                 alert_type=alert.alert_type,
