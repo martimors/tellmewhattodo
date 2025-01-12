@@ -60,6 +60,7 @@ def get_alerts(db: DbDep, *, latest_only: bool = True) -> list[Alert]:
             AlertTable.extractor_id == last_acked_sub.c.extractor_id,
         )
         .order_by(
+            AlertTable.acked_at,
             sub.c.created_at.desc(),
             AlertTable.name,
         )

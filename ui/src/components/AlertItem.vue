@@ -11,6 +11,7 @@ const props = defineProps<{
   acked: boolean
   description: string
   url?: string | null
+  last_acked_name?: string | null
 }>()
 
 const icon = computed(() => {
@@ -30,11 +31,10 @@ const just_date = computed(() => {
       <i>
         <v-icon v-bind:name="icon" />
       </i>
-      <span v-if="url != null"
-        ><a v-bind:href="url" target="_blank" rel="noopener">{{ name }}</a></span
-      >
+      <span v-if="url != null"><a v-bind:href="url" target="_blank" rel="noopener">{{ name }}</a></span>
       <span v-else>{{ name }}</span>
-      <span class="date">{{ just_date }}</span>
+      <span class="date">{{ just_date }}
+        <span v-if="last_acked_name != '' && !acked">(last acked {{ last_acked_name }})</span> </span>
     </div>
     <div class="details">
       <BButton @click="$emit('ack', props.id)">{{ props.acked ? 'unack' : 'ack' }}</BButton>

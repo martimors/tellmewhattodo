@@ -21,7 +21,6 @@ const initialLoadAlerts = async () => {
 }
 
 const sortAlerts = () => {
-  console.log("Sortin'")
   alertStore.value.sort((a, b) => {
     if (a.acked !== b.acked) {
       return Number(a.acked) - Number(b.acked)
@@ -66,6 +65,7 @@ onBeforeMount(initialLoadAlerts)
         :acked="al.acked ?? false"
         :description="al.description ?? ''"
         :url="al.url"
+        :last_acked_name="al.last_acked_name ?? ''"
       />
     </template>
   </BListGroup>
