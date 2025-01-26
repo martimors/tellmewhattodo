@@ -80,7 +80,7 @@ def get_alerts(db: DbDep, *, latest_only: bool = True) -> list[Alert]:
 
 
 @app.patch("/{alert_id}")
-def ack_alert(db: DbDep, *, alert_id: str, acked: bool) -> None:
+def ack_alert(db: DbDep, *, alert_id: str, acked: bool) -> Alert:
     alert = db.scalar(select(AlertTable).where(AlertTable.id == alert_id))
     if not alert:
         raise HTTPException(status_code=404)
@@ -88,6 +88,8 @@ def ack_alert(db: DbDep, *, alert_id: str, acked: bool) -> None:
         alert.acked_at = datetime.now(UTC)
     else:
         alert.acked_at = None
+    db.commit()
+    return Alert.model_validate(alert)
 
 
 @app.post("/", status_code=http.HTTPStatus.ACCEPTED)

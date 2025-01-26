@@ -10,7 +10,7 @@ export type Alert = {
     description?: (string | null);
     url?: (string | null);
     last_acked_name?: (string | null);
-    acked: boolean;
+    readonly acked: boolean;
 };
 
 export type AlertType = 'github' | 'dockerhub' | 'docker_helm';
@@ -48,6 +48,6 @@ export type AckAlertAlertIdPatchData = {
     };
 };
 
-export type AckAlertAlertIdPatchResponse = (unknown);
+export type AckAlertAlertIdPatchResponse = (Alert);
 
 export type AckAlertAlertIdPatchError = (HTTPValidationError);

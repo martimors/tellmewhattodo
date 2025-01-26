@@ -33,20 +33,21 @@ const sortAlerts = () => {
 }
 
 const ackAlert = async (id: string) => {
-  const alert_ = alertStore.value.find((a) => a.id === id)
+  const alert_ix = alertStore.value.findIndex((a) => a.id === id)
+  const old_alert = alertStore.value[alert_ix]
   try {
-    await ackAlertAlertIdPatch({
+     const new_alert = await ackAlertAlertIdPatch({
       query: {
-        acked: !alert_!.acked,
+        acked: !old_alert!.acked,
       },
       path: {
-        alert_id: alert_!.id,
+        alert_id: old_alert!.id,
       },
     })
+    alertStore.value[alert_ix] = new_alert.data!
   } catch {
     console.error(`Could not ack alert ${id}`)
   }
-  alert_!.acked = !alert_!.acked
   sortAlerts()
 }
 
