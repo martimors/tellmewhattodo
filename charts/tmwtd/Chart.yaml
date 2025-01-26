@@ -2,8 +2,8 @@ apiVersion: v2
 name: tmwtd
 description: A Helm chart for TMWTD
 type: application
-version: 7.0.0
-appVersion: 7.0.0
+version: 7.1.0
+appVersion: 7.1.0
 dependencies:
   - name: rabbitmq
     version: "^15.1"
