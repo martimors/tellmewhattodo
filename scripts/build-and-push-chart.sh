@@ -3,7 +3,7 @@ set -e -o pipefail
 
 helm dependency build ./charts/tmwtd
 helm package ./charts/tmwtd
-CHART=tmwtd-$(helm show chart ./charts/tmwtd | grep '^version:' | awk '{print $2}').tgz
+CHART=tellmewhattodo-$(helm show chart ./charts/tmwtd | grep '^version:' | awk '{print $2}').tgz
 
 echo $CHART
 
