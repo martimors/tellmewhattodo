@@ -1,7 +1,7 @@
 replicaCount: 1
 images:
   ui: dingobar/tellmewhattodo-ui:7.1.1
-  backend: dingobar/tellmewhattodo:7.1.1
+  backend: dingobar/tellmewhattodo-backend:7.1.1
   job: curlimages/curl:latest
 pvc:
   storageClassName: ~
@@ -18,9 +18,6 @@ rabbitmq:
 job:
   config:
     extractors:
-      - type: github
-        config:
-          repository: dingobar/charts
       - type: github
         config:
           repository: apache/airflow

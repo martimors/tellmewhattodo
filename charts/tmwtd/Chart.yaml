@@ -1,6 +1,6 @@
 apiVersion: v2
-name: tmwtd
-description: A Helm chart for TMWTD
+name: tellmewhattodo
+description: A Helm chart for TellMeWhatToDo
 type: application
 version: 7.1.1
 appVersion: 7.1.1

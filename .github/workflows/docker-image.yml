@@ -11,8 +11,10 @@ jobs:
       matrix:
         app:
           - image: tellmewhattodo
+            tag: backend
             dockerfile: Dockerfile
-          - image: tellmewhattodo-ui
+          - image: tellmewhattodo
+            tag: ui
             dockerfile: Dockerfile.ui
     runs-on: ubuntu-latest
     steps:
@@ -32,7 +34,7 @@ jobs:
         context: .
         file: ./${{ matrix.app.dockerfile }}
         push: true
-        tags: dingobar/${{ matrix.app.image }}:${{ env.VERSION }}
+        tags: dingobar/${{ matrix.app.image }}:${{ matrix.app.tag }}-${{ env.VERSION }}
   chart:
     needs:
       - build

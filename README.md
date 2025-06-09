@@ -21,7 +21,7 @@ docker compose up --build
 ## Install with helm
 
 ```sh
-helm upgrade --install tmwtd oci://registry-1.docker.io/dingobar/tmwtd
+helm upgrade --install tmwtd oci://registry-1.docker.io/dingobar/tellmewhattodo
 ```
 
 See [here](./charts/tmwtd/values.yaml) for possible values.

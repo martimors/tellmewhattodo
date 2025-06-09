@@ -7,4 +7,4 @@ CHART=tmwtd-$(helm show chart ./charts/tmwtd | grep '^version:' | awk '{print $2
 
 echo $CHART
 
-helm push $CHART oci://registry-1.docker.io/dingobar
+helm push $CHART oci://registry-1.docker.io/dingobar/tellmewhattodo
