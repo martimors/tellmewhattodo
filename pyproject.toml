@@ -1,6 +1,6 @@
 [project]
 name = "tellmewhattodo"
-version = "7.1.4"
+version = "7.1.5"
 description = "Python backend for TMWTD"
 authors = [{ name = "Martin Morset" }]
 requires-python = "~=3.13"
