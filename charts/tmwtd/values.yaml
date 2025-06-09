@@ -1,6 +1,6 @@
 replicaCount: 1
 images:
-  ui: dingobar/tellmewhattodo-ui:7.1.1
+  ui: dingobar/tellmewhattodo-ui:7.1.2
   backend: dingobar/tellmewhattodo-backend:7.1.1
   job: curlimages/curl:latest
 pvc:

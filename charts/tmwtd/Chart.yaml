@@ -2,8 +2,8 @@ apiVersion: v2
 name: tellmewhattodo
 description: A Helm chart for TellMeWhatToDo
 type: application
-version: 7.1.1
-appVersion: 7.1.1
+version: 7.1.2
+appVersion: 7.1.2
 dependencies:
   - name: rabbitmq
     version: "^15.1"

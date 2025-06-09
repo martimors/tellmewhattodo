@@ -1,30 +1,36 @@
-[tool.poetry]
+[project]
 name = "tellmewhattodo"
-version = "7.1.1"
+version = "7.1.2"
 description = "Python backend for TMWTD"
-authors = ["Martin Morset"]
-license = "Apache 2.0"
-packages = [{ include = "tellmewhattodo" }]
+authors = [{ name = "Martin Morset" }]
+requires-python = "~=3.13"
+license = "Apache-2.0"
+dependencies = [
+    "pydantic~=2.9",
+    "requests~=2.32",
+    "PyYAML~=6.0",
+    "pydantic-settings~=2.6",
+    "fastapi[standard]>=0.115.4,<0.116",
+    "sqlalchemy~=2.0",
+    "celery>=5.4.0,<6",
+]
 
-[tool.poetry.dependencies]
-python = "^3.13"
+[dependency-groups]
+dev = [
+    "pre-commit~=4.0",
+    "black~=24.10",
+    "pytest~=8.3",
+]
 
-pydantic = "^2.9"
-requests = "^2.32"
-PyYAML = "^6.0"
-pydantic-settings = "^2.6"
-fastapi = {extras = ["standard"], version = "^0.115.4"}
-sqlalchemy = "^2.0"
-celery = "^5.4.0"
+[tool.hatch.build.targets.sdist]
+include = ["tellmewhattodo"]
 
-[tool.poetry.group.dev.dependencies]
-pre-commit = "^4.0"
-black = "^24.10"
-pytest = "^8.3"
+[tool.hatch.build.targets.wheel]
+include = ["tellmewhattodo"]
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [tools.black]
 line-length = 100
