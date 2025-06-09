@@ -1,4 +1,11 @@
 repos:
+  - repo: local
+    hooks:
+      - id: set-version
+        name: Set versions based on VERSION file
+        language: system
+        entry: ./scripts/set-version.sh
+        files: ^(Chart\.yaml|VERSION|pyproject\.toml)$
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.7.3
     hooks:
@@ -15,10 +22,3 @@ repos:
       - id: uv-lock
       - id: uv-export
         args: ["--frozen", "--output-file=requirements.txt", "--no-emit-workspace"]
-  - repo: local
-    hooks:
-      - id: set-version
-        name: Set versions based on VERSION file
-        language: system
-        entry: ./scripts/set-version.sh
-        files: ^(Chart\.yaml|VERSION|pyproject\.toml)$
